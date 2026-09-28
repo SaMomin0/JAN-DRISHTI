@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="JAN-DRISHTI — AI-Powered MPLADS Risk Intelligence Platform by Ministry of Statistics & Programme Implementation (MoSPI). Real-time monitoring of 80,733 infrastructure works.">
+  <meta name="theme-color" content="#050810">
+  <title>JAN-DRISHTI | MPLADS Risk Intelligence Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Animated Mesh Background -->
+  <canvas id="bgCanvas" aria-hidden="true"></canvas>
+
+  <!-- ━━━ COMMAND PALETTE ━━━ -->
+  <div class="cmd-overlay" id="cmdOverlay" role="dialog" aria-modal="true" aria-label="Command Palette" hidden>
+    <div class="cmd-modal">
+      <div class="cmd-search-row">
+        <svg class="cmd-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input type="text" id="cmdInput" class="cmd-input" placeholder="Search commands, pages, works…" autocomplete="off" spellcheck="false" aria-label="Command search">
+        <kbd class="cmd-esc-key" onclick="closeCmdPalette()">ESC</kbd>
+      </div>
+      <div class="cmd-results" id="cmdResults">
+        <div class="cmd-section-label">Navigate</div>
+        <button class="cmd-result-item" data-view="dashboard" onclick="navigateTo('dashboard');closeCmdPalette()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Executive Dashboard
+          <kbd class="cmd-shortcut">⌘1</kbd>
+        </button>
+        <button class="cmd-result-item" data-view="works" onclick="navigateTo('works');closeCmdPalette()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          Work Directory
+          <kbd class="cmd-shortcut">⌘2</kbd>
+        </button>
+        <button class="cmd-result-item" data-view="risk" onclick="navigateTo('risk');closeCmdPalette()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Risk Cases
+          <kbd class="cmd-shortcut">⌘3</kbd>
+        </button>
+        <button class="cmd-result-item" data-view="analytics" onclick="navigateTo('analytics');closeCmdPalette()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Analytics
+          <kbd class="cmd-shortcut">⌘4</kbd>
+        </button>
+        <button class="cmd-result-item" data-view="reports" onclick="navigateTo('reports');closeCmdPalette()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          Audit Reports
+          <kbd class="cmd-shortcut">⌘5</kbd>
+        </button>
+        <div class="cmd-section-label">Actions</div>
+        <button class="cmd-result-item" onclick="triggerRefresh();closeCmdPalette()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          Refresh Dashboard
+        </button>
+        <button class="cmd-result-item" onclick="showToast('Exporting report...','success');closeCmdPalette()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export Report
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ━━━ TOAST CONTAINER ━━━ -->
+  <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- ━━━ STATUS BAR ━━━ -->
+  <div class="status-bar" role="banner" aria-label="System status">
+    <div class="status-left">
+      <span class="status-pulse" aria-hidden="true"></span>
+      <span class="status-brand">JAN-DRISHTI v2.0.0</span>
+      <span class="status-divider" aria-hidden="true">|</span>
+      <span class="status-org">Ministry of Statistics &amp; Programme Implementation (MoSPI)</span>
+    </div>
+    <div class="status-right">
+      <span class="status-badge-online">
+        <span class="status-dot" aria-hidden="true"></span>
+        SQLite Active &middot; 80,733 Works
+      </span>
+      <span class="status-divider" aria-hidden="true">|</span>
+      <time class="status-clock" id="statusClock" aria-label="Current time"></time>
+      <span class="status-divider" aria-hidden="true">|</span>
+      <span class="status-access">Authorized Access Only</span>
+    </div>
+  </div>
+
+  <!-- ━━━ APP SHELL ━━━ -->
+  <div class="app-shell" id="appShell">
+
+    <!-- ━━━ SIDEBAR ━━━ -->
+    <aside class="sidebar" id="sidebar" role="complementary" aria-label="Main navigation">
+      <div class="sidebar-header">
+        <button class="logo-wrap" data-view="dashboard" onclick="navigateTo('dashboard')" aria-label="JAN-DRISHTI Home">
+          <div class="logo-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
+          <div class="logo-text-wrap">
+            <span class="logo-name">JAN-DRISHTI</span>
+            <span class="logo-tagline">MPLADS Intelligence</span>
+          </div>
+        </button>
+        <button class="sidebar-collapse-btn" id="sidebarCollapseBtn" aria-label="Collapse sidebar" title="Collapse sidebar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav" role="navigation" aria-label="Platform navigation">
+        <span class="nav-group-label">Platform</span>
+        <a href="#" class="nav-link active" id="nav-dashboard" data-view="dashboard" onclick="navigateTo('dashboard')" aria-current="page">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <span class="nav-label">Executive Overview</span>
+          <span class="nav-pill live">Live</span>
+        </a>
+        <a href="#" class="nav-link" id="nav-works" data-view="works" onclick="navigateTo('works')">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          <span class="nav-label">Work Directory</span>
+          <span class="nav-pill count">80.7K</span>
+        </a>
+        <a href="#" class="nav-link" id="nav-risk" data-view="risk" onclick="navigateTo('risk')">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span class="nav-label">Risk Cases</span>
+          <span class="nav-pill danger">3.4K</span>
+        </a>
+        <a href="#" class="nav-link" id="nav-analytics" data-view="analytics" onclick="navigateTo('analytics')">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          <span class="nav-label">Analytics</span>
+        </a>
+
+        <span class="nav-group-label" style="margin-top:1.25rem">Intelligence</span>
+        <a href="#" class="nav-link" id="nav-ai" data-view="ai" onclick="navigateTo('ai')">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          <span class="nav-label">AI Assistant</span>
+          <span class="nav-pill ai">Beta</span>
+        </a>
+        <a href="#" class="nav-link" id="nav-reports" data-view="reports" onclick="navigateTo('reports')">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <span class="nav-label">Audit Reports</span>
+        </a>
+
+        <span class="nav-group-label" style="margin-top:1.25rem">System</span>
+        <a href="#" class="nav-link" id="nav-settings" data-view="settings" onclick="navigateTo('settings')">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M19.07 19.07l-1.41-1.41M4.93 19.07l1.41-1.41M21 12h-2M5 12H3M12 21v-2M12 5V3"/></svg>
+          <span class="nav-label">Settings</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="responsible-ai-card">
+          <div class="rai-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            Responsible AI Active
+          </div>
+          <p class="rai-text">Statistical indicators highlight unusual patterns for authorized human review and do not establish wrongdoing.</p>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ━━━ MAIN WRAPPER ━━━ -->
+    <div class="main-wrapper" id="mainWrapper">
+
+      <!-- ━━━ TOP BAR ━━━ -->
+      <header class="topbar" role="banner">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open navigation menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <nav class="breadcrumb" aria-label="Breadcrumb">
+            <span class="breadcrumb-root">JAN-DRISHTI</span>
+            <svg class="breadcrumb-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+            <span class="breadcrumb-current" id="pageTitle">Executive Overview</span>
+          </nav>
+        </div>
+        <div class="topbar-right">
+          <button class="search-btn" id="searchBtn" aria-label="Open command palette (⌘K)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <span>Search anything…</span>
+            <kbd>⌘K</kbd>
+          </button>
+
+          <!-- Notification bell -->
+          <div class="notif-wrapper" id="notifWrapper">
+            <button class="icon-action-btn" id="notifBtn" aria-label="Notifications (3 unread)" aria-expanded="false" aria-haspopup="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              <span class="notif-badge" aria-label="3 unread">3</span>
+            </button>
+            <div class="notif-panel" id="notifPanel" hidden role="menu">
+              <div class="notif-panel-header">
+                <span class="notif-panel-title">Notifications</span>
+                <button class="notif-mark-all" onclick="markAllRead()" aria-label="Mark all as read">Mark all read</button>
+              </div>
+              <div class="notif-list">
+                <div class="notif-item unread" role="menuitem">
+                  <div class="notif-item-icon danger" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></div>
+                  <div class="notif-item-body">
+                    <p class="notif-item-title">High-risk anomaly detected</p>
+                    <p class="notif-item-desc">Work #W-48293 — 312% cost variance above district median</p>
+                    <time class="notif-item-time">2 minutes ago</time>
+                  </div>
+                </div>
+                <div class="notif-item unread" role="menuitem">
+                  <div class="notif-item-icon warning" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+                  <div class="notif-item-body">
+                    <p class="notif-item-title">Analysis pipeline #48 complete</p>
+                    <p class="notif-item-desc">80,733 records processed · 3,421 anomalies detected</p>
+                    <time class="notif-item-time">14 minutes ago</time>
+                  </div>
+                </div>
+                <div class="notif-item" role="menuitem">
+                  <div class="notif-item-icon success" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/></svg></div>
+                  <div class="notif-item-body">
+                    <p class="notif-item-title">Q3 2025 Report ready</p>
+                    <p class="notif-item-desc">National audit report generated and ready for download</p>
+                    <time class="notif-item-time">1 hour ago</time>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="user-chip" role="img" aria-label="System Administrator">SA</div>
+        </div>
+      </header>
+
+      <!-- ━━━ MAIN CONTENT ━━━ -->
+      <main class="page-main" id="pageMain" role="main">
+
+        <!-- ═══════════════════════════════════════════
+             VIEW: DASHBOARD
+        ═══════════════════════════════════════════ -->
+        <section class="view active" id="view-dashboard" aria-label="Executive Dashboard">
+
+          <div class="page-hero">
+            <div class="page-hero-text">
+              <p class="page-eyebrow">Live Intelligence Dashboard</p>
+              <h1 class="page-heading">Executive Overview</h1>
+              <p class="page-subtext">Real-time risk analysis across 80,733 MPLADS works spanning 28 states and 543 Parliamentary constituencies.</p>
+            </div>
+            <div class="page-hero-actions">
+              <button class="btn btn-ghost" id="refreshBtn" onclick="triggerRefresh()" aria-label="Refresh dashboard">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                Refresh
+              </button>
+              <button class="btn btn-primary" onclick="showToast('Report generation started…','success')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Export Report
+              </button>
+            </div>
+          </div>
+
+          <!-- Metric Cards -->
+          <div class="metrics-grid">
+            <article class="metric-card" aria-label="Total Works">
+              <div class="metric-card-header">
+                <div class="metric-icon-wrap blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
+                <span class="metric-trend up">↑ 2.3%</span>
+              </div>
+              <div class="metric-value" id="cnt-total" data-target="80733">0</div>
+              <div class="metric-label">Total Works Monitored</div>
+              <div class="metric-progress"><div class="metric-progress-fill blue" style="width:100%"></div></div>
+            </article>
+
+            <article class="metric-card" aria-label="High-Risk Anomalies">
+              <div class="metric-card-header">
+                <div class="metric-icon-wrap red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+                <span class="metric-trend down">↓ 0.4%</span>
+              </div>
+              <div class="metric-value" id="cnt-risk" data-target="3421">0</div>
+              <div class="metric-label">High-Risk Anomalies</div>
+              <div class="metric-progress"><div class="metric-progress-fill red" style="width:42%"></div></div>
+            </article>
+
+            <article class="metric-card" aria-label="Completion Rate">
+              <div class="metric-card-header">
+                <div class="metric-icon-wrap emerald"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+                <span class="metric-trend up">↑ 68.3%</span>
+              </div>
+              <div class="metric-value" id="cnt-rate" data-target="68" data-suffix="%">0</div>
+              <div class="metric-label">Work Completion Rate</div>
+              <div class="metric-progress"><div class="metric-progress-fill emerald" style="width:68%"></div></div>
+            </article>
+
+            <article class="metric-card" aria-label="Average Risk Score">
+              <div class="metric-card-header">
+                <div class="metric-icon-wrap purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div>
+                <span class="metric-trend neutral">— stable</span>
+              </div>
+              <div class="metric-value" id="cnt-score" data-target-text="7.4">0</div>
+              <div class="metric-label">Avg Risk Score (0–10)</div>
+              <div class="metric-progress"><div class="metric-progress-fill purple" style="width:74%"></div></div>
+            </article>
+
+            <article class="metric-card" aria-label="Constituencies">
+              <div class="metric-card-header">
+                <div class="metric-icon-wrap amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg></div>
+                <span class="metric-trend up">28 States</span>
+              </div>
+              <div class="metric-value" id="cnt-const" data-target="543">0</div>
+              <div class="metric-label">Parliamentary Constituencies</div>
+              <div class="metric-progress"><div class="metric-progress-fill amber" style="width:80%"></div></div>
+            </article>
+
+            <article class="metric-card" aria-label="Analysis Runs">
+              <div class="metric-card-header">
+                <div class="metric-icon-wrap indigo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+                <span class="metric-trend up">↑ 12%</span>
+              </div>
+              <div class="metric-value" id="cnt-runs" data-target="33">0</div>
+              <div class="metric-label">Analysis Runs This Month</div>
+              <div class="metric-progress"><div class="metric-progress-fill indigo" style="width:33%"></div></div>
+            </article>
+          </div>
+
+          <!-- Charts Row 1 -->
+          <div class="charts-grid-2">
+            <div class="chart-panel">
+              <div class="chart-panel-header">
+                <div>
+                  <h2 class="chart-panel-title">Risk Distribution</h2>
+                  <p class="chart-panel-subtitle">Works by risk category · 80,733 total</p>
+                </div>
+                <div class="chart-tabs">
+                  <button class="chart-tab active">All</button>
+                  <button class="chart-tab">2025</button>
+                  <button class="chart-tab">2024</button>
+                </div>
+              </div>
+              <div class="donut-container">
+                <canvas id="donutChart" width="200" height="200" aria-label="Risk distribution donut chart"></canvas>
+                <div class="donut-center-label">
+                  <span class="donut-center-value">80,733</span>
+                  <span class="donut-center-text">Total Works</span>
+                </div>
+              </div>
+              <div class="donut-legend">
+                <div class="legend-row"><span class="legend-swatch" style="background:#10b981"></span><span>Low Risk</span><strong>80%</strong></div>
+                <div class="legend-row"><span class="legend-swatch" style="background:#f59e0b"></span><span>Medium Risk</span><strong>15%</strong></div>
+                <div class="legend-row"><span class="legend-swatch" style="background:#ef4444"></span><span>High Risk</span><strong>4%</strong></div>
+                <div class="legend-row"><span class="legend-swatch" style="background:#dc2626"></span><span>Critical</span><strong>1%</strong></div>
+              </div>
+            </div>
+
+            <div class="chart-panel">
+              <div class="chart-panel-header">
+                <div>
+                  <h2 class="chart-panel-title">Risk Trend Analysis</h2>
+                  <p class="chart-panel-subtitle">Monthly anomaly detection · Jan–Sep 2025</p>
+                </div>
+                <div class="chart-tabs">
+                  <button class="chart-tab active">6M</button>
+                  <button class="chart-tab">1Y</button>
+                  <button class="chart-tab">All</button>
+                </div>
+              </div>
+              <canvas id="lineChart" aria-label="Risk trend line chart"></canvas>
+            </div>
+          </div>
+
+          <!-- Charts Row 2 -->
+          <div class="charts-grid-2">
+            <div class="chart-panel">
+              <div class="chart-panel-header">
+                <div>
+                  <h2 class="chart-panel-title">State-wise Risk Distribution</h2>
+                  <p class="chart-panel-subtitle">Top 10 states by flagged work count</p>
+                </div>
+              </div>
+              <canvas id="barChart" aria-label="State risk distribution bar chart"></canvas>
+            </div>
+
+            <div class="chart-panel">
+              <div class="chart-panel-header">
+                <div>
+                  <h2 class="chart-panel-title">Critical Alerts</h2>
+                  <p class="chart-panel-subtitle">Requires immediate authorized review</p>
+                </div>
+                <button class="link-btn" onclick="navigateTo('risk')">View all →</button>
+              </div>
+              <div class="alerts-list" role="list">
+                <div class="alert-row critical" role="listitem">
+                  <span class="alert-severity-badge critical">CRITICAL</span>
+                  <div class="alert-row-body">
+                    <p class="alert-row-title">#W-48293 — Extreme Cost Overrun</p>
+                    <p class="alert-row-desc">₹8.4L sanctioned · ₹34.2L spent · 312% variance above district median</p>
+                  </div>
+                  <span class="alert-score-chip critical">9.8</span>
+                </div>
+                <div class="alert-row high" role="listitem">
+                  <span class="alert-severity-badge high">HIGH</span>
+                  <div class="alert-row-body">
+                    <p class="alert-row-title">#W-31204 — Long-term Delay</p>
+                    <p class="alert-row-desc">Due: Jan 2024 · Incomplete · 640 days overdue</p>
+                  </div>
+                  <span class="alert-score-chip high">8.4</span>
+                </div>
+                <div class="alert-row high" role="listitem">
+                  <span class="alert-severity-badge high">HIGH</span>
+                  <div class="alert-row-body">
+                    <p class="alert-row-title">#W-22918 — Vendor Cluster</p>
+                    <p class="alert-row-desc">Same vendor · 14 works in constituency · Statistical cluster</p>
+                  </div>
+                  <span class="alert-score-chip high">7.9</span>
+                </div>
+                <div class="alert-row medium" role="listitem">
+                  <span class="alert-severity-badge medium">MED</span>
+                  <div class="alert-row-body">
+                    <p class="alert-row-title">#W-55401 — Document Gap</p>
+                    <p class="alert-row-desc">Completion certificate missing · ₹2.1L disbursed</p>
+                  </div>
+                  <span class="alert-score-chip medium">6.2</span>
+                </div>
+                <div class="alert-row medium" role="listitem">
+                  <span class="alert-severity-badge medium">MED</span>
+                  <div class="alert-row-body">
+                    <p class="alert-row-title">#W-67832 — Geo Mismatch</p>
+                    <p class="alert-row-desc">Location conflict — reported vs GPS verification data</p>
+                  </div>
+                  <span class="alert-score-chip medium">5.8</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Activity Timeline -->
+          <div class="section-panel">
+            <div class="section-panel-header">
+              <h2 class="chart-panel-title">System Activity Feed</h2>
+              <p class="chart-panel-subtitle">Last 24 hours of platform events</p>
+            </div>
+            <ol class="timeline" aria-label="System activity timeline">
+              <li class="timeline-entry">
+                <div class="timeline-dot success" aria-hidden="true"></div>
+                <div class="timeline-body">
+                  <p class="timeline-title">Analysis pipeline #48 completed successfully</p>
+                  <p class="timeline-desc">80,733 records processed · 3,421 statistical anomalies detected · Risk scores updated for all constituencies</p>
+                </div>
+                <time class="timeline-time">14 min ago</time>
+              </li>
+              <li class="timeline-entry">
+                <div class="timeline-dot danger" aria-hidden="true"></div>
+                <div class="timeline-body">
+                  <p class="timeline-title">Critical anomaly flagged: Work #W-48293</p>
+                  <p class="timeline-desc">Extreme cost variance indicator detected (312%) — forwarded for authorized reviewer assignment</p>
+                </div>
+                <time class="timeline-time">16 min ago</time>
+              </li>
+              <li class="timeline-entry">
+                <div class="timeline-dot info" aria-hidden="true"></div>
+                <div class="timeline-body">
+                  <p class="timeline-title">Q3 2025 National Audit Report generated</p>
+                  <p class="timeline-desc">Comprehensive MPLADS performance report compiled and ready for authorized download</p>
+                </div>
+                <time class="timeline-time">1 hr ago</time>
+              </li>
+              <li class="timeline-entry">
+                <div class="timeline-dot warning" aria-hidden="true"></div>
+                <div class="timeline-body">
+                  <p class="timeline-title">CSV data ingestion completed</p>
+                  <p class="timeline-desc">2 new constituency datasets merged · 4,829 records added · Data quality checks passed</p>
+                </div>
+                <time class="timeline-time">3 hrs ago</time>
+              </li>
+              <li class="timeline-entry">
+                <div class="timeline-dot success" aria-hidden="true"></div>
+                <div class="timeline-body">
+                  <p class="timeline-title">Database backup completed</p>
+                  <p class="timeline-desc">SQLite snapshot archived · 80,733 records secured · Integrity checksum verified</p>
+                </div>
+                <time class="timeline-time">6 hrs ago</time>
+              </li>
+            </ol>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════
+             VIEW: WORKS
+        ═══════════════════════════════════════════ -->
+        <section class="view" id="view-works" aria-label="Work Directory" hidden>
+          <div class="page-hero">
+            <div class="page-hero-text">
+              <p class="page-eyebrow">Work Directory</p>
+              <h1 class="page-heading">MPLADS Work Database</h1>
+              <p class="page-subtext">Browse, filter, and investigate all 80,733 monitored MPLADS infrastructure works across India.</p>
+            </div>
+            <button class="btn btn-primary" onclick="showToast('Exporting CSV…','success')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Export CSV
+            </button>
+          </div>
+
+          <div class="filter-bar" role="search">
+            <div class="filter-search-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              <input type="search" id="workSearch" class="filter-search-input" placeholder="Search by Work ID, title, MP, constituency…" oninput="filterWorks()" aria-label="Search works">
+            </div>
+            <select class="filter-select" id="riskFilter" onchange="filterWorks()" aria-label="Filter by risk level">
+              <option value="">All Risk Levels</option>
+              <option value="critical">Critical</option>
+              <option value="high">High Risk</option>
+              <option value="medium">Medium Risk</option>
+              <option value="low">Low Risk</option>
+            </select>
+            <select class="filter-select" id="stateFilter" onchange="filterWorks()" aria-label="Filter by state">
+              <option value="">All States</option>
+              <option>Maharashtra</option>
+              <option>Uttar Pradesh</option>
+              <option>Bihar</option>
+              <option>Rajasthan</option>
+              <option>West Bengal</option>
+              <option>Madhya Pradesh</option>
+              <option>Gujarat</option>
+              <option>Karnataka</option>
+            </select>
+            <select class="filter-select" id="statusFilter" onchange="filterWorks()" aria-label="Filter by status">
+              <option value="">All Statuses</option>
+              <option value="completed">Completed</option>
+              <option value="in-progress">In Progress</option>
+              <option value="stalled">Stalled</option>
+              <option value="incomplete">Incomplete</option>
+            </select>
+          </div>
+
+          <div class="table-panel">
+            <div class="table-panel-header">
+              <span class="table-count-label">Showing <strong id="workCountLabel">20</strong> of 80,733 works</span>
+              <div class="pagination-controls">
+                <button class="icon-action-btn" aria-label="Previous page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
+                <span class="page-info-label">Page 1 of 4,037</span>
+                <button class="icon-action-btn" aria-label="Next page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+              </div>
+            </div>
+            <div class="table-scroll-wrap">
+              <table class="data-table" id="worksTable">
+                <thead>
+                  <tr>
+                    <th scope="col">Work ID</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">State</th>
+                    <th scope="col">MP / Constituency</th>
+                    <th scope="col">Sanctioned (₹L)</th>
+                    <th scope="col">Spent (₹L)</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Risk Score</th>
+                    <th scope="col">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="worksBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════
+             VIEW: RISK
+        ═══════════════════════════════════════════ -->
+        <section class="view" id="view-risk" aria-label="Risk Cases" hidden>
+          <div class="page-hero">
+            <div class="page-hero-text">
+              <p class="page-eyebrow">Risk Intelligence</p>
+              <h1 class="page-heading">Risk Case Review</h1>
+              <p class="page-subtext">Statistical variance indicators flagged for authorized human review. These indicators do not establish wrongdoing.</p>
+            </div>
+            <div class="page-hero-actions">
+              <button class="btn btn-ghost" onclick="showToast('Risk data refreshed','info')">Refresh</button>
+              <button class="btn btn-danger" onclick="showToast('Risk report exported','success')">Export Risk Report</button>
+            </div>
+          </div>
+
+          <div class="risk-summary-grid">
+            <div class="risk-summary-card critical-card">
+              <div class="risk-summary-icon critical-card"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+              <div class="risk-summary-num">342</div>
+              <div class="risk-summary-lbl">Critical Risk</div>
+              <div class="risk-summary-sub">Score ≥ 9.0</div>
+            </div>
+            <div class="risk-summary-card high-card">
+              <div class="risk-summary-icon high-card"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+              <div class="risk-summary-num">3,079</div>
+              <div class="risk-summary-lbl">High Risk</div>
+              <div class="risk-summary-sub">Score 7.0–8.9</div>
+            </div>
+            <div class="risk-summary-card medium-card">
+              <div class="risk-summary-icon medium-card"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+              <div class="risk-summary-num">12,110</div>
+              <div class="risk-summary-lbl">Medium Risk</div>
+              <div class="risk-summary-sub">Score 4.0–6.9</div>
+            </div>
+            <div class="risk-summary-card low-card">
+              <div class="risk-summary-icon low-card"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/></svg></div>
+              <div class="risk-summary-num">65,202</div>
+              <div class="risk-summary-lbl">Low / Clear</div>
+              <div class="risk-summary-sub">Score &lt; 4.0</div>
+            </div>
+          </div>
+
+          <div class="table-panel">
+            <div class="table-panel-header">
+              <span class="chart-panel-title">Flagged High-Risk Works</span>
+              <span class="chart-panel-subtitle">For authorized reviewer assignment only</span>
+            </div>
+            <div class="table-scroll-wrap">
+              <table class="data-table" id="riskTable">
+                <thead>
+                  <tr>
+                    <th scope="col">Work ID</th>
+                    <th scope="col">Risk Flags Detected</th>
+                    <th scope="col">State</th>
+                    <th scope="col">Constituency</th>
+                    <th scope="col">Risk Score</th>
+                    <th scope="col">Severity</th>
+                    <th scope="col">Review Status</th>
+                    <th scope="col">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="riskBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════
+             VIEW: ANALYTICS
+        ═══════════════════════════════════════════ -->
+        <section class="view" id="view-analytics" aria-label="Analytics" hidden>
+          <div class="page-hero">
+            <div class="page-hero-text">
+              <p class="page-eyebrow">Deep Analytics</p>
+              <h1 class="page-heading">Platform Analytics</h1>
+              <p class="page-subtext">Longitudinal risk performance analytics across the complete MPLADS dataset.</p>
+            </div>
+          </div>
+
+          <div class="analytics-full-chart chart-panel">
+            <div class="chart-panel-header">
+              <div>
+                <h2 class="chart-panel-title">Annual Work Completion Rate</h2>
+                <p class="chart-panel-subtitle">Completed vs sanctioned works per financial year (FY2019–FY2025)</p>
+              </div>
+            </div>
+            <canvas id="areaChart" aria-label="Annual completion area chart"></canvas>
+          </div>
+
+          <div class="charts-grid-2" style="margin-top:1.5rem">
+            <div class="chart-panel">
+              <div class="chart-panel-header">
+                <div>
+                  <h2 class="chart-panel-title">Anomaly Type Breakdown</h2>
+                  <p class="chart-panel-subtitle">Risk categories by detection frequency</p>
+                </div>
+              </div>
+              <canvas id="hbarChart" aria-label="Horizontal anomaly breakdown chart"></canvas>
+            </div>
+
+            <div class="chart-panel">
+              <div class="chart-panel-header">
+                <div>
+                  <h2 class="chart-panel-title">Risk Indicator Frequency</h2>
+                  <p class="chart-panel-subtitle">Most common signals across 80,733 works</p>
+                </div>
+              </div>
+              <div class="indicator-list">
+                <div class="indicator-row"><span class="indicator-label">Cost Overrun (&gt;200%)</span><div class="indicator-track"><div class="indicator-fill" style="width:82%;background:#ef4444"></div></div><span class="indicator-count">1,821</span></div>
+                <div class="indicator-row"><span class="indicator-label">Delayed Completion</span><div class="indicator-track"><div class="indicator-fill" style="width:73%;background:#f59e0b"></div></div><span class="indicator-count">1,624</span></div>
+                <div class="indicator-row"><span class="indicator-label">Vendor Clustering</span><div class="indicator-track"><div class="indicator-fill" style="width:54%;background:#8b5cf6"></div></div><span class="indicator-count">1,198</span></div>
+                <div class="indicator-row"><span class="indicator-label">Document Gaps</span><div class="indicator-track"><div class="indicator-fill" style="width:41%;background:#6366f1"></div></div><span class="indicator-count">911</span></div>
+                <div class="indicator-row"><span class="indicator-label">Geo Location Mismatch</span><div class="indicator-track"><div class="indicator-fill" style="width:28%;background:#3b82f6"></div></div><span class="indicator-count">621</span></div>
+                <div class="indicator-row"><span class="indicator-label">Quality Failure Proxy</span><div class="indicator-track"><div class="indicator-fill" style="width:18%;background:#10b981"></div></div><span class="indicator-count">400</span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════
+             VIEW: AI ASSISTANT
+        ═══════════════════════════════════════════ -->
+        <section class="view" id="view-ai" aria-label="AI Assistant" hidden>
+          <div class="page-hero">
+            <div class="page-hero-text">
+              <p class="page-eyebrow">AI Intelligence</p>
+              <h1 class="page-heading">AI Assistant <span class="beta-badge">BETA</span></h1>
+              <p class="page-subtext">Natural language interface for exploring MPLADS risk patterns and analytical insights across 80,733 works.</p>
+            </div>
+          </div>
+
+          <div class="ai-layout">
+            <div class="ai-chat-panel">
+              <div class="ai-messages-area" id="aiMessages" role="log" aria-live="polite" aria-label="AI conversation">
+                <div class="ai-msg ai-msg-system">
+                  <div class="ai-avatar system-avatar" aria-hidden="true">AI</div>
+                  <div class="ai-bubble system-bubble">
+                    <p>Hello. I'm the <strong>JAN-DRISHTI AI Assistant</strong>. I can help you explore risk patterns, summarize constituency data, investigate anomalies, and generate insights from the 80,733-record MPLADS database.</p>
+                    <p class="ai-disclaimer-note">⚠️ All outputs are statistical in nature and do not constitute findings of wrongdoing or official government determinations.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="ai-input-row">
+                <input type="text" id="aiInput" class="ai-text-input" placeholder="Ask about risk patterns, states, MPs, anomalies…" onkeydown="if(event.key==='Enter')sendAIMessage()" aria-label="Type your question">
+                <button class="btn btn-primary ai-send-btn" onclick="sendAIMessage()" aria-label="Send message">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <aside class="ai-sidebar" aria-label="AI suggestions and status">
+              <h2 class="chart-panel-title">Suggested Queries</h2>
+              <div class="ai-suggestions-list">
+                <button class="ai-suggestion-chip" onclick="askAI('Show top 5 critical risk works')">Show top 5 critical risk works</button>
+                <button class="ai-suggestion-chip" onclick="askAI('Which state has highest risk concentration?')">Highest risk by state?</button>
+                <button class="ai-suggestion-chip" onclick="askAI('Summarize cost overrun anomalies in Bihar')">Cost overrun summary — Bihar</button>
+                <button class="ai-suggestion-chip" onclick="askAI('List stalled works older than 2 years')">Stalled works &gt; 2 years</button>
+                <button class="ai-suggestion-chip" onclick="askAI('What is the completion rate for Maharashtra?')">Completion rate — Maharashtra</button>
+                <button class="ai-suggestion-chip" onclick="askAI('Show vendor clustering patterns in UP')">Vendor clustering — UP</button>
+              </div>
+
+              <h2 class="chart-panel-title" style="margin-top:2rem">System Status</h2>
+              <div class="ai-status-list">
+                <div class="ai-status-row"><span>Database Records</span><strong>80,733</strong></div>
+                <div class="ai-status-row"><span>AI Model</span><strong>JD-Risk v2.0</strong></div>
+                <div class="ai-status-row"><span>Last Analysis</span><strong>14 min ago</strong></div>
+                <div class="ai-status-row"><span>API Status</span><strong class="text-emerald">● Online</strong></div>
+                <div class="ai-status-row"><span>Backend</span><strong>FastAPI 0.104</strong></div>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════
+             VIEW: REPORTS
+        ═══════════════════════════════════════════ -->
+        <section class="view" id="view-reports" aria-label="Audit Reports" hidden>
+          <div class="page-hero">
+            <div class="page-hero-text">
+              <p class="page-eyebrow">Audit &amp; Compliance</p>
+              <h1 class="page-heading">Audit Reports</h1>
+              <p class="page-subtext">Generate, review, and download compliance and risk assessment reports for authorized distribution.</p>
+            </div>
+            <button class="btn btn-primary" onclick="showToast('Report generation started…','success')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              Generate Report
+            </button>
+          </div>
+
+          <div class="reports-grid">
+            <article class="report-card">
+              <div class="report-card-icon blue-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+              <div class="report-card-body">
+                <h3 class="report-card-title">Q3 2025 — National Risk Report</h3>
+                <p class="report-card-meta">Generated: Sep 15, 2025 &middot; 80,733 works covered &middot; PDF + Excel</p>
+                <div class="report-card-tags">
+                  <span class="tag">National</span><span class="tag">Risk Analysis</span><span class="tag success">Ready</span>
+                </div>
+              </div>
+              <button class="btn btn-sm btn-ghost" onclick="showToast('Downloading Q3 2025 report…','success')">Download</button>
+            </article>
+
+            <article class="report-card">
+              <div class="report-card-icon purple-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg></div>
+              <div class="report-card-body">
+                <h3 class="report-card-title">Maharashtra — State Risk Profile</h3>
+                <p class="report-card-meta">Generated: Sep 10, 2025 &middot; 6,421 works &middot; PDF</p>
+                <div class="report-card-tags">
+                  <span class="tag">Maharashtra</span><span class="tag">State-level</span><span class="tag success">Ready</span>
+                </div>
+              </div>
+              <button class="btn btn-sm btn-ghost" onclick="showToast('Downloading Maharashtra report…','success')">Download</button>
+            </article>
+
+            <article class="report-card">
+              <div class="report-card-icon amber-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg></div>
+              <div class="report-card-body">
+                <h3 class="report-card-title">AI Anomaly Detection Summary</h3>
+                <p class="report-card-meta">Generated: Sep 8, 2025 &middot; 3,421 flagged works &middot; Excel</p>
+                <div class="report-card-tags">
+                  <span class="tag">AI Analysis</span><span class="tag">Anomalies</span><span class="tag warning">Review</span>
+                </div>
+              </div>
+              <button class="btn btn-sm btn-ghost" onclick="showToast('Downloading anomaly report…','success')">Download</button>
+            </article>
+
+            <article class="report-card">
+              <div class="report-card-icon emerald-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+              <div class="report-card-body">
+                <h3 class="report-card-title">Annual Performance Review FY2024</h3>
+                <p class="report-card-meta">Generated: Apr 1, 2025 &middot; Comprehensive &middot; PDF</p>
+                <div class="report-card-tags">
+                  <span class="tag">Annual</span><span class="tag">Performance</span><span class="tag success">Ready</span>
+                </div>
+              </div>
+              <button class="btn btn-sm btn-ghost" onclick="showToast('Downloading FY2024 report…','success')">Download</button>
+            </article>
+
+            <article class="report-card">
+              <div class="report-card-icon red-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+              <div class="report-card-body">
+                <h3 class="report-card-title">Bihar Constituency Deep-Dive</h3>
+                <p class="report-card-meta">Generated: Aug 28, 2025 &middot; 40 constituencies &middot; PDF</p>
+                <div class="report-card-tags">
+                  <span class="tag">Bihar</span><span class="tag">Deep-dive</span><span class="tag success">Ready</span>
+                </div>
+              </div>
+              <button class="btn btn-sm btn-ghost" onclick="showToast('Downloading Bihar report…','success')">Download</button>
+            </article>
+
+            <article class="report-card">
+              <div class="report-card-icon indigo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+              <div class="report-card-body">
+                <h3 class="report-card-title">Vendor Concentration Risk Report</h3>
+                <p class="report-card-meta">Scheduled: Oct 1, 2025 &middot; National &middot; Generating…</p>
+                <div class="report-card-tags">
+                  <span class="tag">Vendors</span><span class="tag">Clustering</span><span class="tag pending">Pending</span>
+                </div>
+              </div>
+              <button class="btn btn-sm btn-ghost" disabled>Pending</button>
+            </article>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════
+             VIEW: SETTINGS
+        ═══════════════════════════════════════════ -->
+        <section class="view" id="view-settings" aria-label="Settings" hidden>
+          <div class="page-hero">
+            <div class="page-hero-text">
+              <p class="page-eyebrow">Configuration</p>
+              <h1 class="page-heading">System Settings</h1>
+              <p class="page-subtext">Configure API endpoints, risk thresholds, display preferences, and Responsible AI parameters.</p>
+            </div>
+          </div>
+
+          <div class="settings-layout">
+            <div class="settings-group">
+              <h2 class="settings-group-title">API Configuration</h2>
+              <div class="settings-field">
+                <label class="settings-label" for="apiUrl">Backend API URL</label>
+                <p class="settings-desc">FastAPI server endpoint for all data operations</p>
+                <input type="text" id="apiUrl" class="settings-input" value="http://127.0.0.1:8000/api/v1">
+              </div>
+              <div class="settings-field">
+                <label class="settings-label" for="apiKey">API Access Token</label>
+                <p class="settings-desc">Bearer token for authenticated API access</p>
+                <input type="password" id="apiKey" class="settings-input" value="••••••••••••••••••••••••">
+              </div>
+            </div>
+
+            <div class="settings-group">
+              <h2 class="settings-group-title">Risk Thresholds</h2>
+              <div class="settings-field">
+                <label class="settings-label" for="criticalScore">Critical Risk Score</label>
+                <p class="settings-desc">Works scoring above this value are marked Critical</p>
+                <input type="number" id="criticalScore" class="settings-input" value="9.0" min="0" max="10" step="0.1">
+              </div>
+              <div class="settings-field">
+                <label class="settings-label" for="highScore">High Risk Score</label>
+                <p class="settings-desc">Works scoring above this value are marked High Risk</p>
+                <input type="number" id="highScore" class="settings-input" value="7.0" min="0" max="10" step="0.1">
+              </div>
+              <div class="settings-field">
+                <label class="settings-label" for="costVariance">Cost Variance Alert Threshold (%)</label>
+                <p class="settings-desc">Flag when spending exceeds sanctioned amount by this percentage</p>
+                <input type="number" id="costVariance" class="settings-input" value="150" min="0" max="1000">
+              </div>
+            </div>
+
+            <div class="settings-group">
+              <h2 class="settings-group-title">Display Preferences</h2>
+              <div class="settings-field settings-toggle-field">
+                <div>
+                  <div class="settings-label">Dark Mode</div>
+                  <p class="settings-desc">Always enabled for accessibility compliance</p>
+                </div>
+                <button class="toggle-switch active" aria-pressed="true" aria-label="Dark mode (always on)">
+                  <span class="toggle-thumb"></span>
+                </button>
+              </div>
+              <div class="settings-field settings-toggle-field">
+                <div>
+                  <div class="settings-label">Real-time Notifications</div>
+                  <p class="settings-desc">Push alerts for new anomaly detections and pipeline completions</p>
+                </div>
+                <button class="toggle-switch active" id="notifToggle" aria-pressed="true" aria-label="Toggle real-time notifications" onclick="this.classList.toggle('active');this.setAttribute('aria-pressed',this.classList.contains('active'))">
+                  <span class="toggle-thumb"></span>
+                </button>
+              </div>
+              <div class="settings-field settings-toggle-field">
+                <div>
+                  <div class="settings-label">Responsible AI Disclaimers</div>
+                  <p class="settings-desc">Show AI compliance notices across all intelligence features</p>
+                </div>
+                <button class="toggle-switch active" id="aiDisclaimerToggle" aria-pressed="true" aria-label="Toggle AI disclaimers" onclick="this.classList.toggle('active');this.setAttribute('aria-pressed',this.classList.contains('active'))">
+                  <span class="toggle-thumb"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-actions">
+            <button class="btn btn-ghost" onclick="showToast('Settings reset to defaults','info')">Reset to Defaults</button>
+            <button class="btn btn-primary" onclick="showToast('Settings saved successfully','success')">Save Settings</button>
+          </div>
+        </section>
+
+      </main>
+
+      <!-- ━━━ FOOTER ━━━ -->
+      <footer class="page-footer" role="contentinfo">
+        <div class="footer-inner">
+          <span class="footer-copy">&copy; 2026 JAN-DRISHTI &nbsp;&middot;&nbsp; Ministry of Statistics &amp; Programme Implementation (MoSPI) &nbsp;&middot;&nbsp; SIH26102</span>
+          <span class="footer-disclaimer">Responsible AI: Statistical indicators highlight unusual patterns for authorized review and do not establish wrongdoing.</span>
+        </div>
+      </footer>
+
+    </div><!-- /main-wrapper -->
+  </div><!-- /app-shell -->
+
+  <script src="app.js"></script>
+</body>
+</html>

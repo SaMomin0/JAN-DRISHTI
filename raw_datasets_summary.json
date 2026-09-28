@@ -1,0 +1,746 @@
+{
+  "Works Recommended.csv": {
+    "filename": "Works Recommended.csv",
+    "size_bytes": 34620211,
+    "size_mb": 33.02,
+    "row_count": 108746,
+    "column_count": 11,
+    "columns": [
+      "Sr. No.",
+      "Work category",
+      "WORK",
+      "State",
+      "IDA",
+      "Hon'ble Members of Parliament",
+      "Constituency",
+      "Work description",
+      "Recommended date",
+      "RECOMMENDED AMOUNT   ( \u20b9 )",
+      "Sanction Date"
+    ],
+    "duplicate_rows": 0,
+    "col_info": {
+      "Sr. No.": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 108746,
+        "sample_values": [
+          "1",
+          "2",
+          "3"
+        ]
+      },
+      "Work category": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 5,
+        "sample_values": [
+          "Normal/Others",
+          "Trust and Society",
+          "Trust and Society"
+        ]
+      },
+      "WORK": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 80463,
+        "sample_values": [
+          "WS/\t MP620/2024-2025/133166-Construction of buildings for community cultural activities",
+          "WS/\t MP620/2025-2026/133167-Construction of rooms and halls in school and colleges",
+          "WS/\t MP620/2024-2025/133190-Construction of buildings for community cultural activities"
+        ]
+      },
+      "State": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 37,
+        "sample_values": [
+          "Karnataka",
+          "Karnataka",
+          "Karnataka"
+        ]
+      },
+      "IDA": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 764,
+        "sample_values": [
+          "DHARWAD(DEPUTY COMMISSIONER DHARWAR_IDA)",
+          "DHARWAD(DEPUTY COMMISSIONER DHARWAR_IDA)",
+          "DHARWAD(DEPUTY COMMISSIONER DHARWAR_IDA)"
+        ]
+      },
+      "Hon'ble Members of Parliament": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 539,
+        "sample_values": [
+          "Pralhad Venkatesh Joshi",
+          "Pralhad Venkatesh Joshi",
+          "Pralhad Venkatesh Joshi"
+        ]
+      },
+      "Constituency": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 539,
+        "sample_values": [
+          "DHARWAD",
+          "DHARWAD",
+          "DHARWAD"
+        ]
+      },
+      "Work description": {
+        "dtype": "object",
+        "null_count": 116,
+        "null_pct": 0.11,
+        "unique_count": 99245,
+        "sample_values": [
+          "Construction of Community Bhavan at Navalgund TQ Belavatagi Village Pry No 1/A Near Shivanand Math Continue Work",
+          "Construction of College room of  CBS Charitable Foudation at Nulvi Vilage Pry No 817/3 Continued work",
+          "Construction of Community Bhavan of Veerashaiv Jangam Society (R) at Ward No 21 Chidamarnagar Dharwad"
+        ]
+      },
+      "Recommended date": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 775,
+        "sample_values": [
+          "08-Jul-2024",
+          "08-Jul-2024",
+          "08-Jul-2024"
+        ]
+      },
+      "RECOMMENDED AMOUNT   ( \u20b9 )": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 15614,
+        "sample_values": [
+          "497185",
+          "500000",
+          "450000"
+        ]
+      },
+      "Sanction Date": {
+        "dtype": "object",
+        "null_count": 28388,
+        "null_pct": 26.1,
+        "unique_count": 675,
+        "sample_values": [
+          "09-Jul-2024",
+          "18-Sep-2025",
+          "23-Sep-2024"
+        ]
+      }
+    }
+  },
+  "Works Sanctioned.csv": {
+    "filename": "Works Sanctioned.csv",
+    "size_bytes": 28075141,
+    "size_mb": 26.77,
+    "row_count": 80734,
+    "column_count": 12,
+    "columns": [
+      "Sr. No.",
+      "Work category",
+      "Work",
+      "State",
+      "IDA",
+      "Hon'ble Members of Parliament",
+      "Constituency",
+      "Work description",
+      "Recommended date",
+      "Sanction Date",
+      "Sanction Amount ( \u20b9 )",
+      "Work Status"
+    ],
+    "duplicate_rows": 0,
+    "col_info": {
+      "Sr. No.": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 80734,
+        "sample_values": [
+          "1",
+          "2",
+          "3"
+        ]
+      },
+      "Work category": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 5,
+        "sample_values": [
+          "Normal/Others",
+          "Trust and Society",
+          "Trust and Society"
+        ]
+      },
+      "Work": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 80734,
+        "sample_values": [
+          "WS/\t MP620/2024-2025/133166-Construction of buildings for community cultural activities",
+          "WS/\t MP620/2025-2026/133167-Construction of rooms and halls in school and colleges",
+          "WS/\t MP620/2024-2025/133190-Construction of buildings for community cultural activities"
+        ]
+      },
+      "State": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 37,
+        "sample_values": [
+          "Karnataka",
+          "Karnataka",
+          "Karnataka"
+        ]
+      },
+      "IDA": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 759,
+        "sample_values": [
+          "DHARWAD(DEPUTY COMMISSIONER DHARWAR_IDA)",
+          "DHARWAD(DEPUTY COMMISSIONER DHARWAR_IDA)",
+          "DHARWAD(DEPUTY COMMISSIONER DHARWAR_IDA)"
+        ]
+      },
+      "Hon'ble Members of Parliament": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 537,
+        "sample_values": [
+          "Pralhad Venkatesh Joshi",
+          "Pralhad Venkatesh Joshi",
+          "Pralhad Venkatesh Joshi"
+        ]
+      },
+      "Constituency": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 537,
+        "sample_values": [
+          "DHARWAD",
+          "DHARWAD",
+          "DHARWAD"
+        ]
+      },
+      "Work description": {
+        "dtype": "object",
+        "null_count": 98,
+        "null_pct": 0.12,
+        "unique_count": 73482,
+        "sample_values": [
+          "Construction of Community Bhavan at Navalgund TQ Belavatagi Village Pry No 1/A Near Shivanand Math Continue Work",
+          "Construction of College room of  CBS Charitable Foudation at Nulvi Vilage Pry No 817/3 Continued work",
+          "Construction of Community Bhavan of Veerashaiv Jangam Society (R) at Ward No 21 Chidamarnagar Dharwad"
+        ]
+      },
+      "Recommended date": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 768,
+        "sample_values": [
+          "08-Jul-2024",
+          "08-Jul-2024",
+          "08-Jul-2024"
+        ]
+      },
+      "Sanction Date": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 675,
+        "sample_values": [
+          "09-Jul-2024",
+          "18-Sep-2025",
+          "23-Sep-2024"
+        ]
+      },
+      "Sanction Amount ( \u20b9 )": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 14849,
+        "sample_values": [
+          "497185",
+          "500000",
+          "450000"
+        ]
+      },
+      "Work Status": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 7,
+        "sample_values": [
+          "Physical Inspection",
+          "Sanction",
+          "Sanction"
+        ]
+      }
+    }
+  },
+  "Expenditure on Completed and On-going Works as on Date.csv": {
+    "filename": "Expenditure on Completed and On-going Works as on Date.csv",
+    "size_bytes": 21455563,
+    "size_mb": 20.46,
+    "row_count": 85425,
+    "column_count": 11,
+    "columns": [
+      "Sr. No.",
+      "State",
+      "Work",
+      "Work ID",
+      "IDA",
+      "Hon'ble Members of Parliament",
+      "Constituency",
+      "Expenditure Date",
+      "Vendor Name",
+      "Payment Status",
+      "Fund Disbursed Amount ( \u20b9 )"
+    ],
+    "duplicate_rows": 0,
+    "col_info": {
+      "Sr. No.": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 85425,
+        "sample_values": [
+          "1",
+          "2",
+          "3"
+        ]
+      },
+      "State": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 37,
+        "sample_values": [
+          "Uttar Pradesh",
+          "Uttar Pradesh",
+          "Uttar Pradesh"
+        ]
+      },
+      "Work": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 111,
+        "sample_values": [
+          "Construction of roads, link roads, pathways or any other road with or without drainage system",
+          "Construction of roads, link roads, pathways or any other road with or without drainage system",
+          "Construction of roads, link roads, pathways or any other road with or without drainage system"
+        ]
+      },
+      "Work ID": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 57309,
+        "sample_values": [
+          "WS/MP18218/2025-2026/233777",
+          "WS/MP18218/2025-2026/233878",
+          "WS/MP18218/2025-2026/233781"
+        ]
+      },
+      "IDA": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 743,
+        "sample_values": [
+          "GHAZIABAD(DISTRICT MAGISTRAE GHAZIABAD_IDA)",
+          "GHAZIABAD(DISTRICT MAGISTRAE GHAZIABAD_IDA)",
+          "GHAZIABAD(DISTRICT MAGISTRAE GHAZIABAD_IDA)"
+        ]
+      },
+      "Hon'ble Members of Parliament": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 533,
+        "sample_values": [
+          "ATUL GARG",
+          "ATUL GARG",
+          "ATUL GARG"
+        ]
+      },
+      "Constituency": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 533,
+        "sample_values": [
+          "GHAZIABAD",
+          "GHAZIABAD",
+          "GHAZIABAD"
+        ]
+      },
+      "Expenditure Date": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 702,
+        "sample_values": [
+          "21-Aug-2026",
+          "04-Aug-2026",
+          "04-Aug-2026"
+        ]
+      },
+      "Vendor Name": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 24029,
+        "sample_values": [
+          "DARSH BUILDCON",
+          "DARSH BUILDCON",
+          "DARSH BUILDCON"
+        ]
+      },
+      "Payment Status": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 3,
+        "sample_values": [
+          "Payment In-Progress",
+          "Payment In-Progress",
+          "Payment In-Progress"
+        ]
+      },
+      "Fund Disbursed Amount ( \u20b9 )": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 31388,
+        "sample_values": [
+          "799146",
+          "832080",
+          "498309"
+        ]
+      }
+    }
+  },
+  "Works Completed.csv": {
+    "filename": "Works Completed.csv",
+    "size_bytes": 11250522,
+    "size_mb": 10.73,
+    "row_count": 35293,
+    "column_count": 11,
+    "columns": [
+      "Sr. No.",
+      "Work Category",
+      "Work",
+      "State",
+      "IDA",
+      "Work Description",
+      "Hon'ble Members of Parliament",
+      "Constituency",
+      "Image",
+      "Completion Date",
+      "Amount Disbursed ( \u20b9 )"
+    ],
+    "duplicate_rows": 0,
+    "col_info": {
+      "Sr. No.": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 35293,
+        "sample_values": [
+          "1",
+          "2",
+          "3"
+        ]
+      },
+      "Work Category": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 4,
+        "sample_values": [
+          "Normal/Others",
+          "Normal/Others",
+          "Normal/Others"
+        ]
+      },
+      "Work": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 35293,
+        "sample_values": [
+          "WS/MP418/2024-2025/133409-Construction of roads, link roads, pathways or any other road with or without drainage system",
+          "WS/MP18152/2024-2025/133691-Construction of rooms and halls in school and colleges",
+          "WS/MP345/2024-2025/134140-Construction of roads, link roads, pathways or any other road with or without drainage system"
+        ]
+      },
+      "State": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 35,
+        "sample_values": [
+          "Bihar",
+          "Punjab",
+          "Kerala"
+        ]
+      },
+      "IDA": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 677,
+        "sample_values": [
+          "ARARIA(DISTRICT PLANNING OFFICER ARARIA_IDA)",
+          "FARIDKOT(DEPUTY COMMISSIONER FARIDKOT_IDA)",
+          "KOLLAM(DISTRICT COLLECTOR KOLLAM_IDA)"
+        ]
+      },
+      "Work Description": {
+        "dtype": "object",
+        "null_count": 79,
+        "null_pct": 0.22,
+        "unique_count": 31719,
+        "sample_values": [
+          "PCC Road from Permeshwar Bhagat house to Ramdev Master house at ward no 15, uder Forbesganj Block.",
+          "Construction of MID DAY Meal Shed in Govt Primary school Bajakhana (Bus adda)",
+          "Concreting of road from Janathavayanasala -  Panthaplavil, ward no.6  Thrikkaruva GP, in  Kollam Constituency"
+        ]
+      },
+      "Hon'ble Members of Parliament": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 505,
+        "sample_values": [
+          "Pradeep Kumar Singh",
+          "SARABJEET SINGH KHALSA",
+          "Shri NK Premachandran"
+        ]
+      },
+      "Constituency": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 505,
+        "sample_values": [
+          "ARARIA",
+          "FARIDKOT(SC)",
+          "KOLLAM"
+        ]
+      },
+      "Image": {
+        "dtype": "object",
+        "null_count": 9302,
+        "null_pct": 26.36,
+        "unique_count": 2,
+        "sample_values": [
+          "Images",
+          "Images",
+          "Images"
+        ]
+      },
+      "Completion Date": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 610,
+        "sample_values": [
+          "05-Sep-2024",
+          "07-Apr-2025",
+          "12-Aug-2024"
+        ]
+      },
+      "Amount Disbursed ( \u20b9 )": {
+        "dtype": "object",
+        "null_count": 81,
+        "null_pct": 0.23,
+        "unique_count": 13301,
+        "sample_values": [
+          "448127",
+          "300000",
+          "293492"
+        ]
+      }
+    }
+  },
+  "Allocated Limit for Honble MPs.csv": {
+    "filename": "Allocated Limit for Honble MPs.csv",
+    "size_bytes": 35622,
+    "size_mb": 0.03,
+    "row_count": 544,
+    "column_count": 5,
+    "columns": [
+      "Sr. No.",
+      "State",
+      "Hon'ble Members of Parliaments",
+      "Constituency",
+      "Allocated AMOUNT ( \u20b9 )"
+    ],
+    "duplicate_rows": 0,
+    "col_info": {
+      "Sr. No.": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 544,
+        "sample_values": [
+          "1",
+          "2",
+          "3"
+        ]
+      },
+      "State": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 37,
+        "sample_values": [
+          "Maharashtra",
+          "Jammu And Kashmir",
+          "Bihar"
+        ]
+      },
+      "Hon'ble Members of Parliaments": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 544,
+        "sample_values": [
+          "AASHTIKAR PATIL NAGESH BAPURAO",
+          "ABDUL RASHID SHEIKH",
+          "ABHAY KUMAR SINHA"
+        ]
+      },
+      "Constituency": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 543,
+        "sample_values": [
+          "HINGOLI",
+          "BARAMULLAH",
+          "AURANGABAD_BR"
+        ]
+      },
+      "Allocated AMOUNT ( \u20b9 )": {
+        "dtype": "object",
+        "null_count": 1,
+        "null_pct": 0.18,
+        "unique_count": 162,
+        "sample_values": [
+          "190289442",
+          "154773472.11",
+          "147000000"
+        ]
+      }
+    }
+  },
+  "Amount consented for Calamity.csv": {
+    "filename": "Amount consented for Calamity.csv",
+    "size_bytes": 1323,
+    "size_mb": 0.0,
+    "row_count": 13,
+    "column_count": 6,
+    "columns": [
+      "Sr. No.",
+      "Calamity Type",
+      "Calamity Name",
+      "Hon'ble Members of Parliament",
+      "Date of Consent",
+      "Consent Amount ( \u20b9 )"
+    ],
+    "duplicate_rows": 0,
+    "col_info": {
+      "Sr. No.": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 13,
+        "sample_values": [
+          "1",
+          "2",
+          "3"
+        ]
+      },
+      "Calamity Type": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 3,
+        "sample_values": [
+          "National Calamity",
+          "National Calamity",
+          "National Calamity"
+        ]
+      },
+      "Calamity Name": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 7,
+        "sample_values": [
+          "Flood 2025 in Punjab",
+          "Flood 2025 in Punjab",
+          "Flood 2025 in Punjab"
+        ]
+      },
+      "Hon'ble Members of Parliament": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 11,
+        "sample_values": [
+          "Shri Gurjeet Singh Aujla",
+          "GURMEET SINGH MEET HAYER",
+          "Shri Jual Oram"
+        ]
+      },
+      "Date of Consent": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 12,
+        "sample_values": [
+          "07-Dec-2025",
+          "03-Nov-2025",
+          "10-Oct-2025"
+        ]
+      },
+      "Consent Amount ( \u20b9 )": {
+        "dtype": "object",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "unique_count": 7,
+        "sample_values": [
+          "7067400",
+          "7500000",
+          "10000000"
+        ]
+      }
+    }
+  }
+}

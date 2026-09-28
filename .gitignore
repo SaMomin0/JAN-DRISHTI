@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+.venv/
+env/
+venv/
+ENV/
+
+# Production build outputs
+.next/
+out/
+build/
+dist/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+uvicorn.log
+*.log
+
+# Cache & Testing
+.pytest_cache/
+__pycache__/
+*.py[cod]
+*$py.class
+.cache/
+
+# Large SQLite databases (>100MB GitHub limit)
+database/*.db
+database/*backup*.db
+*.db
+
+# OS Files
+.DS_Store
+*.pem
+
+# Local env files
+.env*.local
+.env

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0f1d"/>
+      <stop offset="50%" stop-color="#0d1527"/>
+      <stop offset="100%" stop-color="#141e36"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#818cf8"/>
+    </linearGradient>
+    <style>
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 800; font-size: 72px; fill: #ffffff; letter-spacing: -2px; }
+      .sub { font-family: 'Inter', system-ui, sans-serif; font-weight: 500; font-size: 32px; fill: #94a3b8; }
+      .tag { font-family: 'IBM Plex Mono', monospace; font-size: 20px; fill: #38bdf8; letter-spacing: 2px; }
+    </style>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bgGrad)"/>
+  <circle cx="1050" cy="150" r="320" fill="url(#accent)" opacity="0.08" filter="blur(60px)"/>
+  <circle cx="150" cy="500" r="280" fill="#38bdf8" opacity="0.05" filter="blur(50px)"/>
+  
+  <!-- Content -->
+  <g transform="translate(100, 180)">
+    <text x="0" y="0" class="tag">SMART INDIA HACKATHON 2026 • SIH26102</text>
+    <text x="0" y="80" class="title">JAN-DRISHTI©</text>
+    <text x="0" y="145" class="sub">Evidence-Linked Risk Intelligence for MPLADS</text>
+    <line x1="0" y1="200" x2="300" y2="200" stroke="#38bdf8" stroke-width="3" opacity="0.8"/>
+    <text x="0" y="260" font-family="'Inter', sans-serif" font-size="24" fill="#cbd5e1">Transforming Authorised Public Records Into Explainable Risk Signals</text>
+  </g>
+</svg>
