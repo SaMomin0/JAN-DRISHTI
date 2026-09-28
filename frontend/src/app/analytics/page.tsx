@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { 
   PieChart, 
@@ -19,8 +19,11 @@ import {
   ArrowRight,
   FileCheck2,
   AlertTriangle,
-  Compass
+  Compass,
+  RefreshCw
 } from 'lucide-react';
+import { api } from '../../services/api';
+import { StatisticsResponse, RiskDistributionResponse, RiskFactorSummaryResponse } from '../../types';
 import { MOCK_ANALYTICS } from '../../lib/mockData';
 import { MetricCard } from '../../components/ui/MetricCard';
 import { SpotlightCard } from '../../components/ui/SpotlightCard';
@@ -44,6 +47,31 @@ export default function AnalyticsPage() {
   const [pieMode, setPieMode] = useState<'donut' | 'sliced' | 'polar'>('donut');
   const [sortField, setSortField] = useState<'avg_risk' | 'works' | 'total_amt'>('avg_risk');
   const [sortAsc, setSortAsc] = useState<boolean>(false);
+  const [stats, setStats] = useState<StatisticsResponse | null>(null);
+  const [riskDist, setRiskDist] = useState<RiskDistributionResponse | null>(null);
+  const [riskFactors, setRiskFactors] = useState<RiskFactorSummaryResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadData() {
+      setLoading(true);
+      try {
+        const [s, r, f] = await Promise.all([
+          api.getStatistics(),
+          api.getRiskDistribution(),
+          api.getRiskFactors(),
+        ]);
+        if (s) setStats(s);
+        if (r) setRiskDist(r);
+        if (f) setRiskFactors(f);
+      } catch (err) {
+        console.error('Error fetching analytics live data:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadData();
+  }, []);
 
   const sortedStates = [...MOCK_ANALYTICS.state_risk_league].sort((a, b) => {
     const valA = a[sortField];
@@ -170,8 +198,8 @@ export default function AnalyticsPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <MetricCard
           title="Sanctioned Pool"
-          value="₹14,820 Cr"
-          subtitle="80,733 Project Allocations"
+          value={stats?.overview?.total_sanction_amount ? `₹${(stats.overview.total_sanction_amount / 10000000).toLocaleString(undefined, { maximumFractionDigits: 1 })} Cr` : "₹4,259.4 Cr"}
+          subtitle={`${stats?.overview?.total_works ? stats.overview.total_works.toLocaleString() : '80,733'} Project Allocations`}
           icon={BarChart3}
           iconColor="blue"
           trend={{ value: "543 Constituencies", positive: true }}
@@ -179,30 +207,30 @@ export default function AnalyticsPage() {
         />
         <MetricCard
           title="Disbursed Funds"
-          value="₹11,450 Cr"
-          subtitle="Fund Utilization Baseline"
+          value={stats?.overview?.total_expenditure_amount ? `₹${(stats.overview.total_expenditure_amount / 10000000).toLocaleString(undefined, { maximumFractionDigits: 1 })} Cr` : "₹2,821.7 Cr"}
+          subtitle={`${stats?.overview?.national_expenditure_rate_pct || 33.8}% Utilization Rate`}
           icon={TrendingUp}
           iconColor="emerald"
-          trend={{ value: "77.2% Utilized", positive: true }}
-          progressPct={77.2}
+          trend={{ value: `${stats?.overview?.national_expenditure_rate_pct || 33.8}% Utilized`, positive: true }}
+          progressPct={stats?.overview?.national_expenditure_rate_pct || 33.8}
         />
         <MetricCard
-          title="Flagged Outliers"
-          value="3,418 Works"
-          subtitle="Consensus detection"
+          title="High Risk Outliers"
+          value={riskDist?.distribution?.HIGH ? `${riskDist.distribution.HIGH.toLocaleString()} Works` : "169 Works"}
+          subtitle={`${riskDist?.distribution?.MEDIUM ? riskDist.distribution.MEDIUM.toLocaleString() : '17,900'} Medium Risk`}
           icon={ShieldAlert}
           iconColor="rose"
-          trend={{ value: "4.2% Anomaly Rate", positive: false }}
-          progressPct={4.2}
+          trend={{ value: `${riskDist?.percentages?.HIGH || 0.21}% Outlier Rate`, positive: false }}
+          progressPct={riskDist?.percentages?.HIGH || 0.21}
         />
         <MetricCard
-          title="Verified & Cleared"
-          value="1,940 Works"
-          subtitle="Field audit corroboration"
+          title="Completed Schemes"
+          value={stats?.overview?.completed_works_count ? `${stats.overview.completed_works_count.toLocaleString()} Works` : "35,292 Works"}
+          subtitle={`${stats?.overview?.completion_rate_pct || 43.7}% Completion Rate`}
           icon={FileCheck2}
           iconColor="purple"
-          trend={{ value: "56.7% Resolution", positive: true }}
-          progressPct={56.7}
+          trend={{ value: `${stats?.overview?.completion_rate_pct || 43.7}% Resolution`, positive: true }}
+          progressPct={stats?.overview?.completion_rate_pct || 43.7}
         />
       </div>
 

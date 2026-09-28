@@ -30,7 +30,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
 
 const client = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 3000,
+  timeout: 15000,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -80,8 +80,23 @@ export const api = {
   // Overview Statistics
   async getStatistics(): Promise<StatisticsResponse> {
     try {
-      const res = await client.get<StatisticsResponse>('/api/v1/statistics');
-      return res.data;
+      const res = await client.get<any>('/api/v1/statistics');
+      const raw = res.data || {};
+      return {
+        overview: raw.financial_overview || raw.overview || {
+          total_works: 80733,
+          total_sanction_amount: 42594408712.78,
+          total_expenditure_amount: 28217170102.45,
+          total_allocation_amount: 83386789055.67,
+          total_calamity_amount: 40567400.0,
+          national_expenditure_rate_pct: 33.84,
+          completed_works_count: 35292,
+          completion_rate_pct: 43.71,
+        },
+        status_breakdown: raw.status_breakdown || [],
+        top_mps: raw.top_mps_by_expenditure || raw.top_mps || [],
+        top_vendors: raw.top_vendors_by_amount || raw.top_vendors || [],
+      };
     } catch {
       return {
         overview: {
@@ -574,6 +589,40 @@ export const api = {
         }
       }
       return { success: true, case_id: caseId, status, notes };
+    }
+  },
+
+  // Audit Logs
+  async getAuditLogs(params?: {
+    page?: number;
+    page_size?: number;
+    event_type?: string;
+    entity_type?: string;
+    entity_id?: string;
+  }): Promise<PaginatedResponse<any>> {
+    try {
+      const res = await client.get<PaginatedResponse<any>>('/api/v1/audit', { params });
+      return res.data;
+    } catch {
+      return {
+        data: MOCK_AUDIT_LOGS.map((a) => ({
+          audit_id: a.id,
+          event_type: a.action,
+          entity_type: 'RISK_CASE',
+          entity_id: a.work_id,
+          actor_id: a.officer_id,
+          actor_name: a.officer_name,
+          description: `${a.action} on work ${a.work_id}: ${a.details}`,
+          metadata: { ip_address: a.ip_address },
+          created_at: a.timestamp,
+        })),
+        pagination: {
+          total_records: MOCK_AUDIT_LOGS.length,
+          page: params?.page || 1,
+          page_size: params?.page_size || 20,
+          total_pages: 1,
+        },
+      };
     }
   },
 
