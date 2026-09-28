@@ -28,13 +28,23 @@ export default function RiskCaseDetailsPage() {
   const router = useRouter();
   const caseId = (params?.id as string) || 'RC-2026-0842';
 
-  // Find matching case or default to first
-  const currentCase = MOCK_RISK_CASES.find(c => c.case_id === caseId) || MOCK_RISK_CASES[0];
+  // Find matching case or construct safe fallback
+  const rawFound = MOCK_RISK_CASES.find(c => c.case_id === caseId || c.work_id === caseId || caseId.includes(c.work_id));
+  const currentCase: RiskCase = rawFound || {
+    ...MOCK_RISK_CASES[0],
+    case_id: caseId,
+    work_id: caseId.replace('CASE-', ''),
+    title: `Investigation Dossier for Work ${caseId}`,
+    dossier: {
+      ...MOCK_RISK_CASES[0].dossier,
+      project_summary: `Statistical outlier analysis flagged for MPLADS Scheme ${caseId}. Field verification recommended prior to fund sanction release.`,
+    }
+  };
 
   const [activeTab, setActiveTab] = useState<'OVERVIEW' | 'SIGNALS' | 'EVIDENCE' | 'PEERS' | 'CHECKLIST' | 'AUDIT'>('OVERVIEW');
-  const [caseStatus, setCaseStatus] = useState<RiskCase['status']>(currentCase.status);
-  const [checklist, setChecklist] = useState(currentCase.dossier.verification_checklist);
-  const [actionHistory, setActionHistory] = useState(currentCase.dossier.officer_action_history);
+  const [caseStatus, setCaseStatus] = useState<RiskCase['status']>(currentCase.status || 'Under Verification');
+  const [checklist, setChecklist] = useState(currentCase.dossier?.verification_checklist || MOCK_RISK_CASES[0].dossier.verification_checklist);
+  const [actionHistory, setActionHistory] = useState(currentCase.dossier?.officer_action_history || MOCK_RISK_CASES[0].dossier.officer_action_history);
   const [newNote, setNewNote] = useState('');
   const [showNoteModal, setShowNoteModal] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
@@ -214,7 +224,7 @@ export default function RiskCaseDetailsPage() {
                 1. Project Narrative & Core Anomaly
               </h3>
               <p className="text-sm text-neutral-300 leading-relaxed font-normal">
-                {currentCase.dossier.project_summary}
+                {currentCase.dossier?.project_summary || 'Verification recommended based on statistical risk signals.'}
               </p>
             </div>
 
@@ -226,7 +236,7 @@ export default function RiskCaseDetailsPage() {
                   <span>Observed Deviations</span>
                 </div>
                 <ul className="space-y-2 text-xs text-neutral-300">
-                  {currentCase.dossier.detected_signals.map((s, idx) => (
+                  {(currentCase.dossier?.detected_signals || []).map((s, idx) => (
                     <li key={idx} className="flex items-start gap-2 bg-white/5 p-2.5 rounded-xl border border-white/5">
                       <span className="text-white font-bold">•</span>
                       <span><strong className="text-white">{s.title}:</strong> {s.detail}</span>
@@ -241,7 +251,7 @@ export default function RiskCaseDetailsPage() {
                   <span>Data Limitations & Gaps</span>
                 </div>
                 <ul className="space-y-2 text-xs text-neutral-300">
-                  {currentCase.dossier.data_limitations.map((l, idx) => (
+                  {(currentCase.dossier?.data_limitations || []).map((l, idx) => (
                     <li key={idx} className="flex items-start gap-2 bg-white/5 p-2.5 rounded-xl border border-white/5">
                       <span className="text-white font-bold">•</span>
                       <span>{l}</span>
@@ -260,7 +270,7 @@ export default function RiskCaseDetailsPage() {
                 <span className="text-[11px] font-mono text-neutral-400">Fair Review</span>
               </h3>
               <div className="space-y-3">
-                {currentCase.dossier.counter_evidence.map((ce, idx) => (
+                {(currentCase.dossier?.counter_evidence || []).map((ce, idx) => (
                   <div key={idx} className="p-3.5 rounded-2xl bg-black border border-white/10 space-y-1.5">
                     <div className="flex justify-between items-center text-[10px] font-mono">
                       <span className="text-neutral-400">{ce.source}</span>
@@ -338,7 +348,7 @@ export default function RiskCaseDetailsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
-                {currentCase.dossier.comparable_peers.map(p => (
+                {(currentCase.dossier?.comparable_peers || []).map(p => (
                   <tr key={p.work_id} className="hover:bg-white/[0.02]">
                     <td className="p-3 font-mono font-medium text-white">{p.work_id}</td>
                     <td className="p-3 text-neutral-300">{p.location}</td>
