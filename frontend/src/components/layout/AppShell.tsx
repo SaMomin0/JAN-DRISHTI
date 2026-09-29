@@ -286,15 +286,6 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
                 <kbd className="bg-white border border-black/10 text-[10px] px-1.5 py-0.5 rounded text-[#6e6e73] font-mono shadow-2xs">⌘K</kbd>
               </button>
 
-              <Link
-                href="/notifications"
-                className="relative p-2 text-[#6e6e73] hover:text-[rgb(26,26,26)] rounded-full hover:bg-neutral-100 transition-colors"
-                title="Notifications Hub"
-              >
-                <Bell className="w-4 h-4" />
-                <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-[#FFADAD]" />
-              </Link>
-
               <NotificationDrawer />
 
               <Link

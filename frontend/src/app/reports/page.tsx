@@ -152,6 +152,51 @@ export default function ReportsPage() {
     window.print();
   };
 
+  const handleDownloadCSV = () => {
+    if (!generatedReport) return;
+    const rows = [
+      ['Report ID', generatedReport.id],
+      ['Title', `"${generatedReport.title}"`],
+      ['Jurisdiction', `"${generatedReport.jurisdiction}"`],
+      ['Generated At', generatedReport.timestamp],
+      ['Total Works', generatedReport.overview.total_works],
+      ['Total Sanction (INR)', generatedReport.overview.total_sanction_amount],
+      ['Total Disbursed (INR)', generatedReport.overview.total_expenditure_amount],
+      ['Completion Rate (%)', generatedReport.overview.completion_rate_pct],
+      [],
+      ['Critical Cases Flagged'],
+      ['Case ID', 'Work ID', 'State', 'Constituency', 'MP Name', 'Priority', 'Recommendation'],
+      ...generatedReport.criticalCases.map((c: any) => [
+        c.case_id,
+        c.work_id,
+        `"${c.state || ''}"`,
+        `"${c.constituency || ''}"`,
+        `"${c.mp_name || ''}"`,
+        c.priority,
+        `"${(c.verification_recommendation || '').replace(/"/g, '""')}"`
+      ])
+    ];
+    const csvContent = 'data:text/csv;charset=utf-8,' + rows.map(e => e.join(',')).join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `${generatedReport.id}_Audit_Report.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleDownloadJSON = () => {
+    if (!generatedReport) return;
+    const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(generatedReport, null, 2))}`;
+    const link = document.createElement('a');
+    link.setAttribute('href', jsonString);
+    link.setAttribute('download', `${generatedReport.id}_Dossier.json`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="space-y-8 max-w-[1500px] mx-auto animate-fadeIn pb-16">
       {/* Top Banner (Apple HIG Inset Card) */}
@@ -419,13 +464,29 @@ export default function ReportsPage() {
               </div>
             </div>
 
-            <div className="flex items-center space-x-3 print:hidden">
+            <div className="flex flex-wrap items-center gap-2.5 print:hidden">
+              <button
+                onClick={handleDownloadCSV}
+                className="px-4 py-2 bg-white hover:bg-[#f5f5f7] text-[rgb(26,26,26)] border border-black/10 active:scale-[0.98] text-xs font-semibold rounded-full flex items-center space-x-1.5 shadow-xs transition-all"
+                title="Download spreadsheet CSV"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>Export CSV</span>
+              </button>
+              <button
+                onClick={handleDownloadJSON}
+                className="px-4 py-2 bg-white hover:bg-[#f5f5f7] text-[rgb(26,26,26)] border border-black/10 active:scale-[0.98] text-xs font-semibold rounded-full flex items-center space-x-1.5 shadow-xs transition-all"
+                title="Download JSON dossier"
+              >
+                <FileText className="w-3.5 h-3.5" />
+                <span>JSON Dossier</span>
+              </button>
               <button
                 onClick={handlePrint}
                 className="px-5 py-2 bg-[rgb(26,26,26)] text-white hover:bg-black active:scale-[0.98] text-xs font-semibold rounded-full flex items-center space-x-1.5 shadow-sm transition-all"
               >
                 <Printer className="w-3.5 h-3.5" />
-                <span>Print / Export PDF</span>
+                <span>Print / PDF</span>
               </button>
             </div>
           </div>

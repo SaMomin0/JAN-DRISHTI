@@ -19,6 +19,7 @@ router = APIRouter(prefix="/api/v1/projects", tags=["Projects"])
 def list_projects(
     page: int = Query(1, ge=1, description="Page number"),
     page_size: int = Query(20, ge=1, le=100, description="Items per page"),
+    q: Optional[str] = Query(None, description="General full-text search across title, description, MP, or work_id"),
     state: Optional[str] = Query(None, description="Filter by State"),
     constituency: Optional[str] = Query(None, description="Filter by Constituency"),
     mp_name: Optional[str] = Query(None, description="Filter by MP Name (partial match)"),
@@ -33,6 +34,9 @@ def list_projects(
     where_clauses = ["1=1"]
     params = []
     
+    if q:
+        where_clauses.append("(work LIKE ? OR work_description LIKE ? OR mp_name LIKE ? OR work_id LIKE ?)")
+        params.extend([f"%{q}%", f"%{q}%", f"%{q}%", f"%{q}%"])
     if state:
         where_clauses.append("state = ?")
         params.append(state)
